@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Photo Gallery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #bc8d8d;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .upload-section {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .card input,
+    .card textarea {
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .card button {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+    }
+
+    .card button.delete {
+      background: #dc3545;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Photography Website</h1>
+
+  <div class="upload-section">
+    <input type="file" id="photoUpload" accept="image/*" multiple />
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <script>
+    const uploadInput = document.getElementById("photoUpload");
+    const gallery = document.getElementById("gallery");
+
+    // Load saved photos from localStorage on startup
+    let photos = JSON.parse(localStorage.getItem("photos") || "[]");
+
+    function saveToStorage() {
+      localStorage.setItem("photos", JSON.stringify(photos));
+    }
+
+    function renderGallery() {
+      gallery.innerHTML = "";
+      photos.forEach((photo, index) => {
+        createPhotoCard(photo, index);
+      });
+    }
+
+    uploadInput.addEventListener("change", (event) => {
+      const files = event.target.files;
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const newPhoto = {
+            src: e.target.result,
+            title: "",
+            description: ""
+          };
+          photos.push(newPhoto);
+          saveToStorage();
+          renderGallery();
+        };
+        reader.readAsDataURL(file);
+      }
+      uploadInput.value = "";
+    });
+
+    function createPhotoCard(photo, index) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.src = photo.src;
+
+      const titleInput = document.createElement("input");
+      titleInput.placeholder = "Photo name";
+      titleInput.value = photo.title;
+      titleInput.oninput = (e) => {
+        photos[index].title = e.target.value;
+        saveToStorage();
+      };
+
+      const descInput = document.createElement("textarea");
+      descInput.placeholder = "Description";
+      descInput.rows = 3;
+      descInput.value = photo.description;
+      descInput.oninput = (e) => {
+        photos[index].description = e.target.value;
+        saveToStorage();
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.className = "delete";
+      deleteBtn.onclick = () => {
+        photos.splice(index, 1);
+        saveToStorage();
+        renderGallery();
+      };
+
+      card.appendChild(img);
+      card.appendChild(titleInput);
+      card.appendChild(descInput);
+      card.appendChild(deleteBtn);
+
+      gallery.appendChild(card);
+    }
+
+    // Initial render
+    renderGallery();
+  </script>
+</body>
+</html>
