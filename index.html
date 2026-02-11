@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Photo Gallery</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Static Photo Gallery</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background: #bc8d8d;
+      background: #f5f5f5;
     }
 
     h1 {
       text-align: center;
-    }
-
-    .upload-section {
-      text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     .gallery {
@@ -31,129 +27,71 @@
       background: white;
       border-radius: 10px;
       padding: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     .card img {
       width: 100%;
+      height: 200px;
+      object-fit: cover;
       border-radius: 8px;
     }
 
-    .card input,
-    .card textarea {
-      width: 100%;
-      margin-top: 8px;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+    .card h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+    }
+
+    .card p {
       font-size: 14px;
-    }
-
-    .card button {
-      margin-top: 8px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #007bff;
-      color: white;
-    }
-
-    .card button.delete {
-      background: #dc3545;
-      margin-left: 5px;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>My Photography Website</h1>
-
-  <div class="upload-section">
-    <input type="file" id="photoUpload" accept="image/*" multiple />
-  </div>
+  <h1>My Static Photo Gallery</h1>
 
   <div class="gallery" id="gallery"></div>
 
   <script>
-    const uploadInput = document.getElementById("photoUpload");
+    // Array of photos with name and description (max 10)
+    const photos = [
+      { src: "https://picsum.photos/400/300?random=1", title: "Sunset", description: "Beautiful sunset over the mountains." },
+      { src: "https://picsum.photos/400/300?random=2", title: "Forest", description: "Green forest with sunlight peeking through." },
+      { src: "https://picsum.photos/400/300?random=3", title: "Beach", description: "Calm beach with golden sand." },
+      { src: "https://picsum.photos/400/300?random=4", title: "City", description: "A bustling city skyline at night." },
+      { src: "https://picsum.photos/400/300?random=5", title: "Desert", description: "Vast desert under a blue sky." },
+      { src: "https://picsum.photos/400/300?random=6", title: "Waterfall", description: "A majestic waterfall in the jungle." },
+      { src: "https://picsum.photos/400/300?random=7", title: "Mountains", description: "Snowy peaks and rocky cliffs." },
+      { src: "https://picsum.photos/400/300?random=8", title: "Lake", description: "Calm lake surrounded by trees." },
+      { src: "https://picsum.photos/400/300?random=9", title: "Flowers", description: "Colorful flowers in full bloom." },
+      { src: "https://picsum.photos/400/300?random=10", title: "Road", description: "A winding road through the hills." }
+    ];
+
     const gallery = document.getElementById("gallery");
 
-    // Load saved photos from localStorage on startup
-    let photos = JSON.parse(localStorage.getItem("photos") || "[]");
-
-    function saveToStorage() {
-      localStorage.setItem("photos", JSON.stringify(photos));
-    }
-
-    function renderGallery() {
-      gallery.innerHTML = "";
-      photos.forEach((photo, index) => {
-        createPhotoCard(photo, index);
-      });
-    }
-
-    uploadInput.addEventListener("change", (event) => {
-      const files = event.target.files;
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const newPhoto = {
-            src: e.target.result,
-            title: "",
-            description: ""
-          };
-          photos.push(newPhoto);
-          saveToStorage();
-          renderGallery();
-        };
-        reader.readAsDataURL(file);
-      }
-      uploadInput.value = "";
-    });
-
-    function createPhotoCard(photo, index) {
+    photos.forEach(photo => {
       const card = document.createElement("div");
       card.className = "card";
 
       const img = document.createElement("img");
       img.src = photo.src;
 
-      const titleInput = document.createElement("input");
-      titleInput.placeholder = "Photo name";
-      titleInput.value = photo.title;
-      titleInput.oninput = (e) => {
-        photos[index].title = e.target.value;
-        saveToStorage();
-      };
+      const title = document.createElement("h3");
+      title.textContent = photo.title;
 
-      const descInput = document.createElement("textarea");
-      descInput.placeholder = "Description";
-      descInput.rows = 3;
-      descInput.value = photo.description;
-      descInput.oninput = (e) => {
-        photos[index].description = e.target.value;
-        saveToStorage();
-      };
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.className = "delete";
-      deleteBtn.onclick = () => {
-        photos.splice(index, 1);
-        saveToStorage();
-        renderGallery();
-      };
+      const desc = document.createElement("p");
+      desc.textContent = photo.description;
 
       card.appendChild(img);
-      card.appendChild(titleInput);
-      card.appendChild(descInput);
-      card.appendChild(deleteBtn);
+      card.appendChild(title);
+      card.appendChild(desc);
 
       gallery.appendChild(card);
-    }
-
-    // Initial render
-    renderGallery();
+    });
   </script>
 </body>
 </html>
+
+
